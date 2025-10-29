@@ -5,15 +5,21 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon src/server.js"
+    "start": "nodemon src/server.js",
+    "watch": "sass --watch src/resources/scss:src/public/css"
   },
   "author": "HaoNguyen",
   "license": "ISC",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "ejs": "^3.1.10",
     "express": "^5.1.0",
-    "genshin-db": "^5.2.3"
+    "express-ejs-layouts": "^2.5.1",
+    "genshin-db": "^5.2.3",
+    "mongoose": "^8.17.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "sass": "^1.89.2"
   }
 }

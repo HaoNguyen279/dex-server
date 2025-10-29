@@ -1,0 +1,212 @@
+<div class="container w-100">
+        <div class="row justify-content-center w-100">
+            <div class="col">
+                <!-- Header -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-primary">
+                        <i class="bi bi-receipt"></i> Hóa Đơn Thanh Toán
+                    </h2>
+                    <p class="text-muted">Xem lại đơn hàng của bạn</p>
+                </div>
+
+                <!-- Invoice Card -->
+                <div class="bg-white rounded-3 shadow-sm p-4">
+                    <!-- Invoice Header -->
+                    <div class="border-bottom pb-3 mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="mb-1">Hóa đơn <span id="invoiceId"></span></h5>
+                                <small class="text-muted">Ngày: <span id="dateString"></span></small>
+                            </div>
+                            <span class="badge bg-success fs-6">Chờ thanh toán</span>
+                        </div>
+                    </div>
+
+                    <!-- Product List -->
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3 text-secondary">Chi tiết sản phẩm:</h6>
+                        
+                        <!-- Product Items -->
+                        <% productItems.forEach(item => { %>
+                            <div class="d-flex justify-content-between align-items-center py-2 item-counter-class">
+                                <div class="d-flex align-items-center">
+                                    <span class="me-2">💻</span>
+                                    <span><%= item.name %></span>
+                                    <span class="badge bg-light text-dark ms-2 item-amount">x<%= item.amount %></span>
+                                </div>
+                                <span class="fw-semibold item-price">$<%= item.price %></span>
+                            </div>
+                        <% }); %>
+                    </div>
+
+                    <!-- Divider -->
+                    <hr class="my-4">
+
+                    <!-- Summary -->
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="text-muted">Tạm tính:</span>
+                            <span id="subTotal"></span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="text-muted">Phí vận chuyển:</span>
+                            <span id="shippingFee"></span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="text-muted">Giảm giá:</span>
+                            <span class="text-success">-$0</span>
+                        </div>
+                        <div class="d-flex justify-content-between py-2">
+                            <span class="text-muted">VAT (10%):</span>
+                            <span id="vatFee"></span>
+                        </div>
+                    </div>
+
+                    <!-- Total -->
+                    <div class="border-top pt-3">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="fw-bold mb-0">Tổng cộng:</h5>
+                            <h4 class="fw-bold text-primary mb-0" id="total"></h4>
+                        </div>
+                    </div>
+
+                    <!-- Payment Buttons -->
+                    <div class="mt-4 d-grid gap-2">
+                        <button class="btn btn-primary btn-lg" onclick="processPayment()">
+                            <i class="bi bi-credit-card me-2"></i>
+                            Thanh Toán Ngay
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="goBack()">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Quay Lại Giỏ Hàng
+                        </button>
+                    </div>
+
+                    <!-- Payment Methods -->
+                    <div class="mt-4 text-center">
+                        <small class="text-muted d-block mb-2">Phương thức thanh toán:</small>
+                        <div class="d-flex justify-content-center gap-3">
+                            <span class="badge bg-light text-dark px-3 py-2">
+                                <i class="bi bi-credit-card"></i> Visa/MasterCard
+                            </span>
+                            <span class="badge bg-light text-dark px-3 py-2">
+                                <i class="bi bi-paypal"></i> PayPal
+                            </span>
+                            <span class="badge bg-light text-dark px-3 py-2">
+                                <i class="bi bi-bank"></i> Chuyển khoản
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Toast for notifications -->
+                <div class="toast-container position-fixed bottom-0 end-0 p-3">
+                    <div id="paymentToast" class="toast" role="alert">
+                        <div class="toast-header">
+                            <i class="bi bi-check-circle-fill text-success me-2"></i>
+                            <strong class="me-auto">Thông báo</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+                        </div>
+                        <div class="toast-body" id="toastMessage">
+                            Thanh toán thành công!
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const date = new Date();
+        const dateString = date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear();
+        document.getElementById('dateString').innerText = dateString;
+        document.getElementById('invoiceId').innerText = '#INV-' + date.getDate() + (date.getMonth() +1) + date.getFullYear() + date.getTime();
+        
+        const item_amount = document.getElementsByClassName('item-counter-class').length;
+        document.getElementById('shippingFee').innerText = '$' + item_amount * 20;
+        const shippingFee = item_amount * 20;
+        
+        const rawData = document.getElementsByClassName('item-price');
+        const data = Array.from(rawData);
+        var map_laptop_amount = new Array();
+        data.forEach(
+            (item) => {
+                var price = parseInt(item.innerText.replace('$','').trim());
+                var amount = parseInt(item.closest('.item-counter-class').querySelector('.item-amount').innerText.replace('x','').trim());
+                map_laptop_amount.push({price , amount});
+            }
+        )
+        var total = 0;
+        map_laptop_amount.forEach(
+            (item) => {
+                total += item.price * item.amount;
+            }
+        )
+        document.getElementById('subTotal').innerText = '$' + total;
+        const vat = total * 0.1;
+        document.getElementById('vatFee').innerText = '$' + vat;
+        total += shippingFee + vat;
+        document.getElementById('total').innerText = '$' + total;
+
+
+        function processPayment() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            // Hiển thị loading
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang xử lý...';
+            btn.disabled = true;
+        }
+
+        // Quay lại giỏ hàng
+        function goBack() {
+            showToast('Quay lại giỏ hàng...', 'info');
+            setTimeout(() => {
+                window.location.href = '/cart';
+            }, 1500);
+        }
+
+
+        function showToast(message, type = 'success') {
+            const toastElement = document.getElementById('paymentToast');
+            const toastMessage = document.getElementById('toastMessage');
+            const toastHeader = toastElement.querySelector('.toast-header i');
+            
+            toastMessage.textContent = message;
+            
+            if (type === 'success') {
+                toastHeader.className = 'bi bi-check-circle-fill text-success me-2';
+            } else if (type === 'info') {
+                toastHeader.className = 'bi bi-info-circle-fill text-info me-2';
+            } else if (type === 'error') {
+                toastHeader.className = 'bi bi-exclamation-circle-fill text-danger me-2';
+            }
+            
+            const toast = new bootstrap.Toast(toastElement);
+            toast.show();
+        }
+
+        // Tính toán lại tổng tiền (nếu cần)
+        // function recalculateTotal() {
+        //     const items = [
+        //         { name: 'MacBook Pro M3 14 inch', quantity: 2, price: 42500000 },
+        //         { name: 'Dell XPS 13 Plus', quantity: 1, price: 35000000 },
+        //         { name: 'Lenovo ThinkPad X1 Carbon', quantity: 3, price: 30000000 },
+        //         { name: 'ASUS ROG Zephyrus G14', quantity: 1, price: 28000000 },
+        //         { name: 'HP Spectre x360 16', quantity: 2, price: 26000000 }
+        //     ];
+            
+        //     let subtotal = 0;
+        //     items.forEach(item => {
+        //         subtotal += item.quantity * item.price;
+        //     });
+            
+        //     const shipping = 500000;
+        //     const discount = 5000000;
+        //     const vat = (subtotal + shipping - discount) * 0.1;
+        //     const total = subtotal + shipping - discount + vat;
+        //     console.log('Tổng tiền:', total.toLocaleString('vi-VN') + '₫');
+        // }
+    </script>

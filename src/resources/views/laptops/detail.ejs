@@ -1,0 +1,266 @@
+<div class="product-container py-5 px-3 px-md-5">
+
+    <div style="position: fixed; bottom: 20px; right: 20px; z-index: 1050;" class="toast align-items-center text-white bg-success border-0" id="myToast" data-bs-delay="3000" data-bs-autohide="true" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="toast_body">
+            
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+
+        <div class="row">
+            <!-- Product Images -->
+            <div class="col-lg-6 mb-4">
+                <div class="product-image-container">
+                    <span class="discount-badge">New</span>
+                    <div id="main-img">
+                        <img src="<%= laptopDetail.image_url %>" alt="laptop-image">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Product Info -->
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <span class="badge bg-dark"><%= laptopDetail.brand %></span>
+                    <span class="badge">Gaming</span>
+                    <span class="badge">Premium</span>
+                </div>
+                
+                <h1 class="product-title"><%= laptopDetail.name %></h1>
+                <p class="text-muted mb-2">SKU: 250116532</p>
+                <div class="d-flex align-items-center mb-3">
+                    <div class="me-2">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </div>
+                    <span class="text-muted">(<%= laptopDetail.total_ratings %> reviews)</span>
+                </div>
+                
+                <div class="price">$<%= laptopDetail.price %></div>
+                
+                <div class="mb-4">
+                    <p><i class="fas fa-check-circle me-2"></i> In stock</p>
+                    <p><i class="fas fa-truck me-2"></i> Free shipping</p>
+                    <p><i class="fas fa-shield-alt me-2"></i> 24 month warranty</p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Color</label>
+                    <div>
+                        <button class="btn btn-outline-dark me-2">Black</button>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2 d-md-flex mb-4">
+                        <input type="hidden" name="id" value="<%= laptopDetail._id %>">
+                        <button class="btn btn-custom btn-primary flex-grow-1 btn-add-to-card" id="addToCartBtn" data-laptopid="<%= laptopDetail._id %>">
+                            <i class="fas fa-shopping-cart me-2"></i> Add to Cart
+                        </button>
+                    <button class="btn btn-outline-secondary btn-icon">
+                        <i class="fas fa-heart"></i>
+                    </button>
+                    <button class="btn btn-outline-secondary btn-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+                
+                <div class="promotion-card">
+                    <h5><i class="fas fa-gift me-2"></i> Promotions</h5>
+                    <p class="mb-2">Receive an additional 200,000₫ discount for M365 Personal, M365 Family</p>
+                    <p class="mb-2">Enter code <strong>03WEEKND50</strong> for a 50,000₫ discount on orders from 1,000,000₫</p>
+                    <p class="mb-0">Enter code <strong>03WEEKND100</strong> for a 100,000₫ discount on orders from 5,000,000₫</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Details Tabs -->
+        <div class="mt-5">  
+            <ul class="nav nav-tabs mb-4" id="productTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="specs-tab" data-bs-toggle="tab" data-bs-target="#specs" type="button" role="tab">Specifications</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" type="button" role="tab">Description</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="reviews-tab" data-bs-toggle="tab" data-bs-target="#reviews" type="button" role="tab">Reviews</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="productTabContent">
+                <!-- Specifications Tab -->
+                <div class="tab-pane fade show active" id="specs" role="tabpanel">
+                    <div class="specs-container">
+                        <h4 class="spec-title">Technical Specifications</h4>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">CPU</span>
+                            <span class="spec-value">Intel® Core™ Ultra 9-285HX (2.8 GHz - 5.5 GHz/ 36MB/ 24 cores, 24 threads)</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">GPU</span>
+                            <span class="spec-value">Intel® AI Boost 13 TOPS</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">RAM</span>
+                            <span class="spec-value">2 x 32GB 6400MHz GDDR5 (supports up to 96GB)</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">Storage</span>
+                            <span class="spec-value">6TB NVMe SSD M.2 PCIe</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">Display</span>
+                            <span class="spec-value">18" Ultra HD (4K) (3840 x 1800) 120Hz, 100% DCI-P3</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">OS</span>
+                            <span class="spec-value">Windows 11</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">Ports</span>
+                            <span class="spec-value">Thunderbolt 4, USB 3.2 Gen 2 Type-A, HDMI 2.1, Mini DisplayPort, SD Card Reader</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">Battery</span>
+                            <span class="spec-value">99.9WHr</span>
+                        </div>
+                        
+                        <div class="spec-item">
+                            <span class="spec-label">Weight</span>
+                            <span class="spec-value">3.1 kg</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Description Tab -->
+                <div class="tab-pane fade" id="description" role="tabpanel">
+                    <div class="specs-container">
+                        <h4 class="mb-4" style="color: var(--accent-red);">MSI Titan 18 HX AI A2XWIG-090VN</h4>
+                        
+                        <p>The MSI Titan 18 HX represents the pinnacle of gaming laptop technology, designed to deliver uncompromising performance for the most demanding gamers and content creators.</p>
+                        
+                        <p>Powered by the latest Intel® Core™ Ultra 9-285HX processor and NVIDIA's GeForce RTX™ 5080 graphics card, this powerhouse can handle any game or creative application with ease. The massive 18-inch Ultra HD display with a 120Hz refresh rate provides stunning visuals with exceptional color accuracy and smoothness.</p>
+                        
+                        <p>With 64GB of high-speed RAM and a generous 6TB of SSD storage, you'll have all the memory and space you need for your games, applications, and media files. The advanced cooling system ensures optimal performance even during extended gaming sessions.</p>
+                        
+                        <p>MSI has also incorporated their latest AI technology to enhance gaming performance, optimize system resources, and improve battery efficiency when you're not plugged in.</p>
+                        
+                        <p>Experience gaming at its finest with the MSI Titan 18 HX  where power meets innovation.</p>
+                    </div>
+                </div>
+                
+                <!-- Reviews Tab -->
+                <div class="tab-pane fade" id="reviews" role="tabpanel">
+                    <div class="specs-container">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h4 class="mb-0" style="color: var(--accent-purple);">Customer Reviews</h4>
+                            <button class="btn btn-outline-primary">Write a Review</button>
+                        </div>
+                        
+                        <!-- Review 1 -->
+                        <div class="border-bottom pb-4 mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h5 style="color: var(--accent-cyan);">Incredible Power</h5>
+                                <div>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">By Minh Hoang, March 15, 2025</p>
+                            <p>This laptop is an absolute beast. I can run any game at max settings with excellent framerates, even with ray tracing enabled. The display is gorgeous and the build quality is top-notch. The only downside is that it's quite heavy, but that's expected for a laptop of this caliber.</p>
+                        </div>
+                        
+                        <!-- Review 2 -->
+                        <div class="border-bottom pb-4 mb-4">
+                            <div class="d-flex justify-content-between mb-2">
+                                <h5 style="color: var(--accent-cyan);">Perfect for Content Creation</h5>
+                                <div>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">By Thuy Linh, March 10, 2025</p>
+                            <p>I use this laptop primarily for video editing and 3D rendering, and it handles everything I throw at it with ease. The screen's color accuracy is fantastic, and having 64GB of RAM means I never have to worry about running multiple applications simultaneously. Battery life is unsurprisingly short, but that's not why you buy a laptop like this.</p>
+                        </div>
+                        
+                        <!-- Review 3 -->
+                        <div>
+                            <div class="d-flex justify-content-between mb-2">
+                                <h5 style="color: var(--accent-cyan);">Gaming Excellence</h5>
+                                <div>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">By Duc Anh, February 28, 2025</p>
+                            <p>After upgrading from my previous gaming laptop, I'm blown away by the performance. The 120Hz 4K display makes every game look incredible, and the keyboard feels great for both gaming and typing. The fan noise can get loud under heavy load, but the cooling system does its job well. Expensive, but worth every penny for serious gamers.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+
+
+    <script>
+        const addToCartBtn = document.getElementById("addToCartBtn");
+        addToCartBtn.addEventListener('click', async () =>{
+            try{
+                const res = await fetch('/cart/add', {
+                    method : "POST",
+                    headers: {"Content-Type" : "application/json"},
+                    body : JSON.stringify({id : addToCartBtn.dataset.laptopid})
+                })
+                const data = await res.json();
+                if (res.ok) {
+                    console.log("RES => SUCCESSFUL");
+                    showToast(data.message, "success");
+                } else {
+                    console.log("RES => FAILED");
+                    showToast(data.message, "error");
+                }
+            }catch(err){
+                showToast("Network error", "error");
+            }
+        })
+        function showToast(msg, type = "info") {
+            const toast_body = document.getElementById("toast_body");
+            toast_body.innerText = msg;
+            const toastEl = document.getElementById('myToast');
+            if(type != "success"){
+                toastEl.classList.remove("bg-success");
+                toastEl.classList.add("bg-danger");
+            }
+            var toast = new bootstrap.Toast(toastEl);
+            toast.show();
+        }
+    </script>
+

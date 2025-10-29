@@ -1,0 +1,146 @@
+
+<div class="container">
+    <div class="wrapper col-12 col-sm-8 col-md-6 col-lg-4 my-5">
+    <form method="POST" action="/register/registerSuccess">
+        <h2>Register</h2>
+        <div class="input-field">
+            <input type="text" name="displayName" required id="input-displayname">
+            <label id="name-label">Enter your display name</label>
+        </div>
+
+        <div class="input-field">
+            <input type="text" name="email" required id="input-email">
+            <label id="email-label">Enter your email</label>
+        </div>
+
+        <div class="input-field">
+            <input type="text" name="password" id="password-first" required>
+            <label id="password-first-label">Enter your password</label>
+        </div>
+
+
+        <div class="input-field">
+            <input type="text" required id="password-second">
+            <label id="password-second-label">Enter your password again</label>
+        </div>
+        <div>
+            <p style="color: #c6463f; text-align: start;" id="valid-error"></p>
+        </div>
+        <div class="forget">
+            <label for="remember">
+                <input type="checkbox" id="remember">   
+                <p style="margin: 0px 0px 0px 10px;">Check to confirm you're not a robot</p>
+            </label>
+        </div>
+        <button type="submit" id="register-button" class="btn btn-outline-success disabled" >Register</button>
+        <div class="register">
+        </div>
+    </form>
+    </div>
+</div>
+<script>
+    const email_regex = /[A-Za-z].+@[A-Za-z]+\.com$/
+
+    const input_email = document.getElementById('input-email');
+    const email_label = document.getElementById('email-label');
+    const password_first = document.getElementById('password-first');
+    const password_second = document.getElementById('password-second');
+    const register_button = document.getElementById('register-button');
+    const password_second_label = document.getElementById('password-second-label');
+    const password_first_label = document.getElementById('password-first-label');
+    const message_valid_error = document.getElementById('valid-error');
+    const input_displayname = document.getElementById('input-displayname');
+    const name_label = document.getElementById('name-label');
+
+    input_email.addEventListener('blur',validAccountRegister);
+    password_first.addEventListener('blur',validAccountRegister);
+    password_second.addEventListener('blur', validAccountRegister);
+    input_displayname.addEventListener('blur', validAccountRegister);
+
+    function validAccountRegister(){
+        var valid4 = validUserDisplayName();
+        var valid1 = validEmail();
+        var valid2 = validPassword();
+        var valid3 = validPasswordLength();
+
+        if(!valid4){
+            message_valid_error.innerHTML = '(*) Display name must not have space, start with a character, at least 2 characters';
+        }
+        else if(!valid1){
+            message_valid_error.innerHTML = '(*) Email first character should be a character not a digit a symbol, and match _@_.com'
+        }
+        else if(!valid3){
+            message_valid_error.innerHTML = '(*) Password must contain at least 8 characters!';
+        }  
+        else if(!valid2){
+            message_valid_error.innerHTML = '(*) Passwords do not match!'
+        }
+        else{
+            message_valid_error.innerHTML = '';
+            register_button.classList.remove('disabled');
+        }
+    }
+    function validUserDisplayName(){
+        var name = input_displayname.value.trim();
+        var nameRegex = /^[a-zA-Z]\w+$/
+        if(!nameRegex.test(name)){
+            input_displayname.closest('.input-field').classList.add('input-field-error');
+            name_label.style = 'color: #c6463f;'
+            register_button.classList.add('disabled');
+            return false;
+        }
+        else{
+            input_displayname.closest('.input-field').classList.remove('input-field-error');
+            name_label.style = '';
+            return true;
+        }
+
+    }
+    function validEmail(){
+        if(!email_regex.test(input_email.value)){
+            input_email.closest('.input-field').classList.add('input-field-error');
+            email_label.style = 'color: #c6463f;'
+            register_button.classList.add('disabled');
+            return false;
+        }
+        else{
+            email_label.style = '';
+            input_email.closest('.input-field').classList.remove('input-field-error');
+            return true;
+        }
+    }
+    function validPassword(){
+        if(password_first.value !== password_second.value ){
+            password_second.closest('.input-field').classList.add('input-field-error');
+            password_first.closest('.input-field').classList.add('input-field-error');
+            password_second_label.style = 'color: #c6463f;'
+            password_first_label.style = 'color: #c6463f;'
+            register_button.classList.add('disabled');
+            return false;
+        }
+        else{
+            password_second.closest('.input-field').classList.remove('input-field-error');
+            password_first.closest('.input-field').classList.remove('input-field-error');
+            password_second_label.style = '';
+            password_first_label.style = '';
+            return true;
+        }
+    }
+    function validPasswordLength(){
+        if(password_first.value.length < 8  ){
+            password_second.closest('.input-field').classList.add('input-field-error');
+            password_first.closest('.input-field').classList.add('input-field-error');
+            password_second_label.style = 'color: #c6463f;'
+            password_first_label.style = 'color: #c6463f;'
+            register_button.classList.add('disabled');
+            return false;
+        }
+        else{
+            password_second.closest('.input-field').classList.remove('input-field-error');
+            password_first.closest('.input-field').classList.remove('input-field-error');
+            password_second_label.style = '';
+            password_first_label.style = '';
+            return true;
+        }
+    }
+</script>

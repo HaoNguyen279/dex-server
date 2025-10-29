@@ -1,0 +1,192 @@
+    <div class="imgup_container">
+        <div class="imgup_main_card">
+            <h1 class="imgup_title">🖼️ Upload Ảnh</h1>
+            
+            <div class="imgup_upload_area" onclick="document.getElementById('fileInput').click()">
+                <span class="imgup_upload_icon">📁</span>
+                <div class="imgup_upload_text">Nhấn để chọn ảnh</div>
+                <div class="imgup_upload_subtext">hoặc kéo thả file vào đây</div>
+                <div class="imgup_selected_file" id="selectedFile"></div>
+            </div>
+
+            <input type="file" id="fileInput" class="imgup_file_input" accept="image/*">
+
+            <div class="imgup_buttons">
+                <button class="imgup_btn imgup_btn_choose" onclick="document.getElementById('fileInput').click()">
+                    📂 Chọn File
+                </button>
+                <button class="imgup_btn imgup_btn_upload" id="uploadBtn" onclick="uploadImage()">
+                    ⬆️ Upload
+                </button>
+            </div>
+
+            <div class="imgup_result_area">
+                <label class="imgup_result_label">Direct URL:</label>
+                <input type="text" class="imgup_result_url" id="resultUrl" placeholder="URL sẽ hiển thị ở đây sau khi upload..." readonly>
+                <button class="imgup_copy_btn" onclick="copyToClipboard()">📋 Copy URL</button>
+            </div>
+
+            <div class="imgup_loading" id="loading">
+                <span class="imgup_spinner"></span>
+                Đang upload...
+            </div>
+            <div class="imgup_error" id="error"></div>
+            <div class="imgup_success" id="success"></div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        // Xử lý chọn file
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                selectedFile = file;
+                const selectedFileDiv = document.getElementById('selectedFile');
+                selectedFileDiv.textContent = `📎 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                selectedFileDiv.style.display = 'block';
+                
+                document.getElementById('uploadBtn').classList.add('active');
+                
+                hideMessages();
+            }
+        });
+
+        // Xử lý drag and drop
+        const uploadArea = document.querySelector('.imgup_upload_area');
+        
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            uploadArea.classList.add('dragover');
+        }
+
+        function unhighlight(e) {
+            uploadArea.classList.remove('dragover');
+        }
+
+        uploadArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type.startsWith('image/')) {
+                    selectedFile = file;
+                    const selectedFileDiv = document.getElementById('selectedFile');
+                    selectedFileDiv.textContent = `📎 ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+                    selectedFileDiv.style.display = 'block';
+                    
+                    document.getElementById('uploadBtn').classList.add('active');
+                    document.getElementById('fileInput').files = files;
+                    
+                    hideMessages();
+                } else {
+                    showError('Vui lòng chọn file ảnh!');
+                }
+            }
+        }
+
+        // Hàm upload ảnh (demo - bạn cần thay thế bằng API thực tế)
+        async function uploadImage() {
+            if (!selectedFile) {
+                showError('Vui lòng chọn file trước!');
+                return;
+            }
+
+            showLoading(true);
+            hideMessages();
+
+            try {
+                // Demo upload - Thay thế đoạn này bằng API upload thực tế của bạn
+                const formData = new FormData();
+                
+
+                // Giả lập upload với delay
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                const fileInput = document.getElementById("fileInput");
+
+                formData.append('image', fileInput.files[0]);
+
+                
+                document.getElementById('resultUrl').value = demoUrl;
+                showSuccess('Upload thành công! ✅');
+                
+                // Post image
+                const response = await fetch('/upload/api', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('resultUrl').value = result.url;
+                    showSuccess('Upload thành công! ✅');
+                } else {
+                    throw new Error('Upload thất bại');
+                }
+                
+                
+            } catch (error) {
+                showError('Có lỗi xảy ra khi upload: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Copy URL to clipboard
+        function copyToClipboard() {
+            const urlInput = document.getElementById('resultUrl');
+            if (urlInput.value) {
+                urlInput.select();
+                document.execCommand('copy');
+                showSuccess('Đã copy URL! 📋');
+            } else {
+                showError('Chưa có URL để copy!');
+            }
+        }
+
+        // Utility functions
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function hideMessages() {
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+        }
+    </script>

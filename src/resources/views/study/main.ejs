@@ -1,0 +1,398 @@
+<body class="study-body">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg study-navbar">
+        <div class="container d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-hourglass-half text-light me-3 study-icon-hourglass"></i>
+                <div>
+                    <div class="study-brand-text">Pomodoro Timer</div>
+                    <div class="study-brand-subtitle">Cyrene</div>
+                </div>
+            </div>
+
+            <div class="study-header-right">
+                <div class="study-mini-card-group">
+                    <div class="study-mini-card text-center">
+                        <div class="study-mini-label">Total Sessions</div>
+                        <div class="study-mini-value"><span id="totalSession"><%= user.sessionStreak || 0 %></span><span class="study-stat-emoji">🔥</span></div>
+                    </div>
+                    <% if(user._id) { %>
+                        <div class="study-mini-card study-mini-card-user">
+                            <div class="study-mini-user-info">
+                                <i class="fas fa-user-circle study-mini-user-avatar"></i>
+                                <div class="study-mini-user-name"><%= user.displayName || user.username %></div>
+                                <a href="/login/logout" class="study-mini-btn">Log out</a>
+                            </div>
+                        </div>
+                    <% } else { %>
+                        <div class="study-mini-card study-mini-card-auth text-center">
+                            <div class="study-mini-label">Ready to focus?</div>
+                            <a href="/login" class="study-mini-btn">Login</a>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="study-settings-dropdown">
+                    <button class="study-settings-toggle" id="studySettingsToggle" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Timer presets">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <div class="study-settings-menu" id="studySettingsMenu">
+                        <button type="button" class="study-settings-option" data-focus="25" data-break="5">25 - 5</button>
+                        <button type="button" class="study-settings-option" data-focus="30" data-break="5">30 - 5</button>
+                        <button type="button" class="study-settings-option" data-focus="35" data-break="5">35 - 5</button>
+                        <button type="button" class="study-settings-option" data-focus="40" data-break="5">40 - 5</button>
+                        <button type="button" class="study-settings-option" data-focus="45" data-break="5">45 - 5</button>
+                        <button type="button" class="study-settings-option" data-focus="60" data-break="10">60 - 10</button>
+                        <button type="button" class="study-settings-option" data-focus="1" data-break="1">Test mode</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container mt-3">
+        <!-- Timer Section -->
+        <div class="row g-4 mb-4">
+            <div class="col-12 text-center">
+                <div class="study-timer-container">
+                    <div class="study-timer-circle mx-auto mb-4">
+                        <svg width="300" height="300">
+                            <circle class="study-progress-ring-circle" stroke="#334155" stroke-width="8" fill="none" r="140" cx="150" cy="150"/>
+                            <circle class="study-progress-ring-circle study-progress-circle-animated" 
+                                    stroke="#8b5cf6" 
+                                    stroke-width="8" 
+                                    fill="none" 
+                                    r="140" 
+                                    cx="150" 
+                                    cy="150" 
+                                    stroke-linecap="round"
+                                    transform="rotate(-90 150 150)"/>
+                        </svg>
+                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%;">
+                            <div class="study-timer-display" id="studyTimerDisplay">25:00</div>
+                            <div class="study-timer-label" id="studyTimerLabel">Focus Time</div>
+                        </div>
+                    </div>
+                    <input type="text" class="study-goal-input" id="studyGoalInput" placeholder="Set your goal...">
+                    <div class="text-center" id="studyControlButtons">
+                        <button class="btn study-btn-start" id="studyBtnStart">
+                            <i class="fas fa-play me-2"></i> Start
+                        </button>
+                        <button class="btn study-btn-reset" id="studyBtnReset">
+                            <i class="fas fa-redo me-2"></i> Reset
+                        </button>
+                    </div>
+                    <div class="text-center" id="studyBreakButtons" style="display: none;">
+                        <button class="btn study-btn-skip" id="studyBtnSkip">
+                            <i class="fas fa-forward me-2"></i> Skip Break
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <audio id="alarmSound1" src="/sounds/alarm.mp3"></audio>
+    <audio id="alarmSound" src="/sounds/donpollo.mp3"></audio>
+    <!-- Modal hoàn thành -->
+    <div class="modal fade" id="studyCompleteModal" tabindex="-1" aria-labelledby="studyCompleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content study-modal-content">
+                <div class="modal-header study-modal-header">
+                    <h5 class="modal-title" id="studyCompleteModalLabel">
+                        <i class="fas fa-check-circle me-2"></i>Session Complete!
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body study-modal-body text-center">
+                    <div class="study-modal-emoji">🎉</div>
+                    <h4 class="mb-3">Great job!</h4>
+                    <p class="mb-4">You've completed a study session. Time for a well-deserved break!</p>
+                    <div class="study-modal-stats">
+                        <div class="study-modal-stat-item">
+                            <i class="fas fa-clock"></i>
+                            <span id="modalBreakTime">5</span> minutes break
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer study-modal-footer">
+                    <button type="button" class="btn study-modal-btn" data-bs-dismiss="modal">Start Break</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const second = 1000;
+        const StudyTimer = {
+            timeLeft: 25 * 60,
+            timerInterval: null,
+            isRunning: false,
+            totalTime: 25 * 60,
+            focusTime: 25,
+            breakTime: 5,
+            isBreakTime: false,
+            
+            elements: {
+                display: document.getElementById('studyTimerDisplay'),
+                label: document.getElementById('studyTimerLabel'),
+                btnStart: document.getElementById('studyBtnStart'),
+                btnReset: document.getElementById('studyBtnReset'),
+                btnSkip: document.getElementById('studyBtnSkip'),
+                controlButtons: document.getElementById('studyControlButtons'),
+                breakButtons: document.getElementById('studyBreakButtons'),
+                progressCircle: document.querySelector('.study-progress-circle-animated'),
+                goalInput: document.getElementById('studyGoalInput'),
+                settingsToggle: document.getElementById('studySettingsToggle'),
+                settingsMenu: document.getElementById('studySettingsMenu'),
+                modalBreakTime: document.getElementById('modalBreakTime'),
+                alarmSound: document.getElementById('alarmSound')
+            },
+            
+            config: {
+                radius: 140,
+                get circumference() {
+                    return 2 * Math.PI * this.radius;
+                }
+            },
+            
+            init() {
+                const circumference = this.config.circumference;
+                this.elements.progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+                this.elements.progressCircle.style.strokeDashoffset = '0';
+                this.elements.progressCircle.style.transition = 'stroke-dashoffset 1s linear';
+                
+                this.elements.presetButtons = Array.from(document.querySelectorAll('.study-settings-option'));
+                this.hideSettingsMenu();
+
+                this.updateDisplay();
+                this.attachEvents();
+            },
+            
+            updateDisplay() {
+                const minutes = Math.floor(this.timeLeft / 60);
+                const seconds = this.timeLeft % 60;
+                this.elements.display.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+                
+                const progress = this.timeLeft / this.totalTime;
+                const offset = this.config.circumference * (1 - progress);
+                
+                this.elements.progressCircle.style.strokeDashoffset = offset;
+            },
+            
+            start() {
+                this.isRunning = true;
+                this.elements.btnStart.innerHTML = '<i class="fas fa-pause me-2"></i> Pause';
+                
+                this.timerInterval = setInterval(() => {
+                    if (this.timeLeft > 0) {
+                        this.timeLeft--;
+                        this.updateDisplay();
+                    } else {
+                        this.complete();
+                    }
+                }, second);
+            },
+            
+            pause() {
+                this.isRunning = false;
+                this.elements.btnStart.innerHTML = '<i class="fas fa-play me-2"></i> Start';
+                clearInterval(this.timerInterval);
+            },
+            
+            reset() {
+                clearInterval(this.timerInterval);
+                this.isRunning = false;
+                this.timeLeft = this.totalTime;
+                this.elements.btnStart.innerHTML = '<i class="fas fa-play me-2"></i> Start';
+                this.updateDisplay();
+            },
+            
+            complete() {
+                clearInterval(this.timerInterval);
+                this.isRunning = false;
+                alarmSound.play();
+                if (!this.isBreakTime) {
+                    // Hoàn thành focus time
+                    addStreak();
+                    this.showCompleteModal();
+                } else {
+                    // Hoàn thành break time
+                    this.endBreak();
+                }
+            },
+
+            showCompleteModal() {
+                this.elements.modalBreakTime.textContent = this.breakTime;
+                const modal = new bootstrap.Modal(document.getElementById('studyCompleteModal'));
+                modal.show();
+                
+                // Bắt đầu break khi đóng modal
+                document.getElementById('studyCompleteModal').addEventListener('hidden.bs.modal', () => {
+                    this.startBreak();
+                }, { once: true });
+            },
+
+            startBreak() {
+                this.isBreakTime = true;
+                this.totalTime = this.breakTime * 60;
+                this.timeLeft = this.totalTime;
+                
+                // Đổi giao diện
+                this.elements.label.textContent = 'Break Time';
+                this.elements.progressCircle.style.stroke = '#10b981';
+                this.elements.controlButtons.style.display = 'none';
+                this.elements.breakButtons.style.display = 'block';
+                this.elements.goalInput.style.display = 'none';
+                
+                this.updateDisplay();
+                this.start();
+            },
+
+            skipBreak() {
+                clearInterval(this.timerInterval);
+                this.isRunning = false;
+                this.endBreak();
+            },
+
+            endBreak() {
+                this.isBreakTime = false;
+                this.totalTime = this.focusTime * 60;
+                this.timeLeft = this.totalTime;
+                
+                // Đổi lại giao diện
+                this.elements.label.textContent = 'Focus Time';
+                this.elements.progressCircle.style.stroke = '#8b5cf6';
+                this.elements.controlButtons.style.display = 'block';
+                this.elements.breakButtons.style.display = 'none';
+                this.elements.goalInput.style.display = 'block';
+                this.elements.btnStart.innerHTML = '<i class="fas fa-play me-2"></i> Start';
+                
+                this.updateDisplay();
+            },
+
+            toggleSettingsMenu() {
+                if (!this.elements.settingsMenu || !this.elements.settingsToggle) {
+                    return;
+                }
+                const shouldOpen = !this.elements.settingsMenu.classList.contains('is-open');
+                this.elements.settingsMenu.classList.toggle('is-open', shouldOpen);
+                this.elements.settingsToggle.setAttribute('aria-expanded', shouldOpen.toString());
+            },
+
+            hideSettingsMenu() {
+                if (!this.elements.settingsMenu || !this.elements.settingsToggle) {
+                    return;
+                }
+                this.elements.settingsMenu.classList.remove('is-open');
+                this.elements.settingsToggle.setAttribute('aria-expanded', 'false');
+            },
+
+            applyPreset(focusMinutes, breakMinutes) {
+                if (!focusMinutes || Number.isNaN(focusMinutes)) {
+                    return;
+                }
+                this.focusTime = focusMinutes;
+                this.breakTime = breakMinutes || 5;
+                this.totalTime = focusMinutes * 60;
+                this.reset();
+                if (this.elements.goalInput) {
+                    this.elements.goalInput.placeholder = `Timer set to ${focusMinutes} minutes`;
+                }
+            },
+            
+            attachEvents() {
+                this.elements.btnStart.addEventListener('click', () => {
+                    if (!this.isRunning) {
+                        this.start();
+                    } else {
+                        this.pause();
+                    }
+                });
+                
+                this.elements.btnReset.addEventListener('click', () => {
+                    this.reset();
+                });
+
+                this.elements.btnSkip.addEventListener('click', () => {
+                    this.skipBreak();
+                });
+                
+                if (this.elements.goalInput) {
+                    this.elements.goalInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter') {
+                            const newMinutes = parseInt(this.elements.goalInput.value);
+                            if (newMinutes > 0 && !isNaN(newMinutes)) {
+                                this.applyPreset(newMinutes);
+                                this.elements.goalInput.value = '';
+                                this.elements.goalInput.placeholder = `Timer set to ${newMinutes} minutes`;
+                            }
+                        }
+                    });
+                }
+
+                if (this.elements.settingsToggle && this.elements.settingsMenu) {
+                    this.elements.settingsToggle.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        this.toggleSettingsMenu();
+                    });
+
+                    if (Array.isArray(this.elements.presetButtons)) {
+                        this.elements.presetButtons.forEach((btn) => {
+                            btn.addEventListener('click', (event) => {
+                                event.stopPropagation();
+                                const focusMinutes = parseInt(btn.dataset.focus, 10);
+                                const breakMinutes = parseInt(btn.dataset.break, 10);
+                                this.applyPreset(focusMinutes, breakMinutes);
+                                this.hideSettingsMenu();
+                            });
+                        });
+                    }
+
+                    document.addEventListener('click', (event) => {
+                        const menu = this.elements.settingsMenu;
+                        const toggle = this.elements.settingsToggle;
+                        if (!menu || !toggle) {
+                            return;
+                        }
+                        if (!menu.contains(event.target) && !toggle.contains(event.target)) {
+                            this.hideSettingsMenu();
+                        }
+                    });
+                }
+            }
+        };
+        
+        async function addStreak() {
+            try {
+                const sessionId = getCookie('sessionId');
+                const response = await fetch('/study/addStreak', 
+                {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ sessionId: sessionId })
+                });
+
+                const data = await response.json();
+                document.getElementById('totalSession').innerText = data.streak || 0;
+                if (data.errorCode === 200) {
+                    console.log('Success:', data);
+                } else {
+                    console.error('Error:', data);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+        
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            StudyTimer.init();
+        });
+    </script>
+</body>

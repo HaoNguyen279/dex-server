@@ -1,0 +1,127 @@
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center">
+	<div class="row justify-content-center w-100">
+		<div class="col-md-6 col-lg-5">
+			<div class="card shadow-lg border-0" style="background-color: #1a1a1a;">
+				<div class="card-bg">
+					<div class="card-body text-center py-5">
+
+						<div class="mb-4">
+							<i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+						</div>
+
+						<h2 class="text-success fw-bold mb-3">Welcome back!</h2>
+                        
+						<p class="text-muted mb-4">
+							Đăng nhập thành công
+						</p>
+                        
+						<div class="alert alert-info" role="alert">
+							<i class="fas fa-location-arrow me-2"></i>
+							Hãy chọn một hành động để tiếp tục nhé!
+						</div>
+                        
+						<div class="d-grid gap-3 d-md-block">
+							<a href="/">
+								<button type="button" class="btn btn-outline-success btn-lg me-md-2 mb-3 mb-md-0">
+									<i class="fas fa-laptop me-2"></i>Khám phá laptop
+								</button>
+							</a>
+							<a href="/study/pomodoro">
+								<button type="button" class="btn btn-outline-primary btn-lg">
+									<i class="fas fa-hourglass-half me-2"></i>Đi đến Study Hub
+								</button>
+							</a>
+						</div>
+                        
+						<div class="mt-4 pt-3 border-top">
+							<small class="text-muted">
+								<i class="fas fa-clock me-1"></i>
+								Đăng nhập lúc: <span id="loginTime"></span>
+							</small>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<style>
+	.fa-check-circle {
+		animation: checkmark 0.6s ease-in-out;
+	}
+    
+	@keyframes checkmark {
+		0% {
+			transform: scale(0);
+			opacity: 0;
+		}
+		50% {
+			transform: scale(1.2);
+		}
+		100% {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+    
+	.card {
+		position: relative;
+		border-radius: 15px;
+		overflow: visible;
+		z-index: 1;
+	}
+
+	.card-bg {
+		position: relative;
+		border-radius: 15px;
+		background-color: #1a1a1a;
+		padding: 2rem; 
+		z-index: 2;
+	}
+
+	.card::before,
+	.card::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border-radius: 15px;
+		background: linear-gradient(270deg,
+			#00ffcc, #ff3399, #ffff33, #33ccff, #cc33ff, #ff6600, #ffffff, #00ffcc ,#ff3399
+		);
+		background-size: 800% 800%;
+		animation: borderFlow 3s linear infinite;
+		will-change: background-position;
+		pointer-events: none;
+	}
+
+	.card::before {
+		padding: 4px; 
+		z-index: 1;
+		box-sizing: border-box;
+		mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+		-webkit-mask-composite: xor;
+		mask-composite: exclude;
+	}
+
+	.card::after {
+		filter: blur(17px);
+		opacity: 0.7;
+		z-index: 0;
+	}
+
+	@keyframes borderFlow {
+		0% { background-position: 0% 50%; }
+		100% { background-position: 100% 50%; }
+	}
+
+	.btn {
+		border-radius: 10px;
+	}
+</style>
+
+
+<script>
+	document.getElementById('loginTime').textContent = new Date().toLocaleString('vi-VN');
+</script>
